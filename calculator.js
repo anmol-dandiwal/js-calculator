@@ -1,30 +1,77 @@
-add = function(x, y){
-    return x + y;
-}
+//HTML constants and functions
+const display = document.getElementById("display");
+const clrButton = document.getElementById("clrButton");
+const numButtons = document.querySelectorAll(".numButtons");
+const opButtons = document.querySelectorAll(".opButton");
+const eqButton = document.getElementById("equalsButton");
 
-sub = function(x, y){
-    return x - y;
-}
+//Variables
+let displayVal; 
+let x = 0; 
+let result;
+let currentOp = "z"; 
 
-mul = function(x, y){
-    return x * y;
-}
+//Populate display with numbers clicked
+numButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+        opButtons.forEach((button) => {
+            button.style["background-color"] = "rgb(255, 86, 120)";
+        })
+        if (display.textContent == "0"){
+            display.textContent = button.textContent;
+        } else if (display.textContent.length <= 10){
+            display.textContent = display.textContent + button.textContent;
+        }
+        displayVal = parseFloat(display.textContent);
+    })
+})
 
-div = function(x, y){
-    return x / y;
-}
+//Clear Display
+clrButton.addEventListener("click", (e) => {
+    display.textContent = "0";
+    x = result = 0; 
+    currentOp = "z";
+})
 
-operate = function(x, y, op){
-    switch (op){
-        case "+":
-            return add(x, y);
-        case "-":
-            return sub(x, y);
-        case "x":
-            return mul(x, y);
-        case "/":
-            return div(x, y);
+//Use operators to operate on current numbers
+opButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+        button.style["background-color"] = "red";
+        evaluate();
+        x = parseFloat(display.textContent, 10);
+        display.textContent = "0";
+        currentOp = button.textContent;
+    })
+})
+
+eqButton.addEventListener("click", evaluate);
+
+//Methods
+function evaluate(){
+    result = operate(x, displayVal, currentOp);
+    if (result.toString().length <= 11){
+        display.textContent = result;
+    } else {
+        display.textContent = result.toPrecision(5);
     }
 }
 
-console.log(operate(1, 2, "+"));
+function operate(x, y, op){
+    console.log(x, y, currentOp);
+    switch (op){
+        case "+":
+            return x + y;
+        case "-":
+            return x - y;
+        case "*":
+            return x * y;
+        case "/":
+            if (y == 0){
+                display.textContent == "error";
+            } else {
+                return x / y;
+            }
+        default:
+            return y;
+    }
+}
